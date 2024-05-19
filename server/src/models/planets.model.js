@@ -2,7 +2,7 @@ const {parse} = require('csv-parse');
 const fs=require('fs');
 const path = require('path');
 
-const HabitablePlanets=[];
+const planets = require('./planets.mongo');
 
 const isHabitablePlanet=(planet)=>
 {
@@ -16,10 +16,10 @@ const loadPlanetsData =()=>{
             comment : '#',
             columns : true,
         }))
-        .on('data',(data)=>{
+        .on('data',async (data)=>{
             if(isHabitablePlanet(data))
-            {
-                HabitablePlanets.push(data);
+            { 
+               savePlanet(data);
             }
         }).on('error',(err)=>{
            console.log(err);
@@ -31,8 +31,25 @@ const loadPlanetsData =()=>{
     })
 }
 
-const getAllPlanets =()=>{
-    return HabitablePlanets;
+const getAllPlanets =async ()=>{
+    return await planets.find({},{'keplerName':1});
+}
+
+
+
+const savePlanet = async (planet)=>{
+   try{
+    await planets.updateOne({
+        keplerName: planet.kepler_name,
+      },{
+        keplerName : planet.kepler_name,
+      },{
+       upsert: true,
+      })
+   }
+   catch(err){
+      console.log("Could not save planet!!! "+err);
+   }
 }
 
 module.exports={
