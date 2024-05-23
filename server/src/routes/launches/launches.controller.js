@@ -1,7 +1,12 @@
 const launchesModel = require("../../models/launches.model");
+const { getPagination } = require("../../services/query");
+
 
 const HttpgetAllLaunches=async (req,res)=>{
-  return res.status(200).json(await launchesModel.getAllLaunches());
+    console.log(req.query);
+    const {skip,limit_per_page} = getPagination(req.query);
+    const launches = await launchesModel.getAllLaunches(skip,limit_per_page);
+    return res.status(200).json(launches);
 }
 
 const HttpAddnewLaunch=async (req,res)=>{

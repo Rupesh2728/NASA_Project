@@ -5,16 +5,6 @@ const planetsDB = require('./planets.mongo');
 const launchesMongo = require('./launches.mongo');
 
 let Default_flight_number = 100;
-const launch = {
-    flightNumber : 100,
-    mission : 'Kepler Exploration X',
-    rocket : 'Explorer IS1',
-    launchDate : new Date('December 27,2030'),
-    target : 'Kepler-442 b',
-    customers: ["ZTM","NASA"],
-    upcoming : true,
-    success : true,
-}
 
 const saveLaunch=async (launch)=>
 {
@@ -33,15 +23,13 @@ const saveLaunch=async (launch)=>
     }
 }
 
-saveLaunch(launch);
 
-
-const getAllLaunches = async () =>
+const getAllLaunches = async (skip,limit) =>
 {
-   return launchesDB.find({},{
+   return await launchesDB.find({},{
       '__v':0,
       '_id':0,
-   })
+   }).sort('flightNumber').skip(skip).limit(limit);
 }
 
 const getlatestFlightNumber = async ()=>{
